@@ -2,17 +2,17 @@
 
 set -eux -o pipefail
 
-script_path="$(cd $(dirname $0); pwd)"
-fonts_file="${1:-$script_path/fonts.txt}"
+FONTS_FILE="$1"
+ROOT_DIR="$2"
 
-fonts_dir=".satysfi/dist/fonts"
+fonts_dir="$ROOT_DIR/dist/fonts"
 mkdir -p "$fonts_dir"
 
 tempdir="$(mktemp -d)"
 
-cat "$fonts_file" | while read filename url; do
+cat "$FONTS_FILE" | while read filename url; do
     echo "$filename <- $url"
-    wget -O "$tempdir/$filename" "$url"
+    wget -nv -O "$tempdir/$filename" "$url"
     unzip -o -d "$tempdir" "$tempdir/$filename"
 done
 

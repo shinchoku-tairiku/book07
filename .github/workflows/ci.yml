@@ -1,0 +1,14 @@
+name: Build a book
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: git submodule update --init --recursive
+      - run: make
+      - uses: actions/upload-artifact@v1
+        with:
+          name: main.pdf
+          path: main.pdf
