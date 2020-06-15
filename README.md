@@ -1,5 +1,7 @@
 # 進捗大陸07
 
+[![](https://github.com/shinchoku-tairiku/book07/workflows/Build%20a%20book/badge.svg)](https://github.com/shinchoku-tairiku/book07/actions?query=workflow%3A%22Build+a+book%22)
+
 ## セットアップ方法
 
 ```
