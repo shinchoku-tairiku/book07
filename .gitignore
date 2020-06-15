@@ -1,0 +1,5 @@
+.satysfi/dist/fonts
+
+*.satysfi-aux
+
+/main.pdf

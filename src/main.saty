@@ -1,0 +1,18 @@
+@import: ../shinchoku-tairiku.satyh/shinchoku-tairiku
+
+@import: yutopp/main
+@import: amutake/main
+@import: no_maddo/main
+
+document '<
+  +p{
+    サークル進捗大陸としての7冊目の本です。
+  }
+  +p{
+    なお、本書の電子書籍版は数ヶ月後に無料配布を予定しております。予めご了承ください。
+  }
+> '<
+  +yutopp;
+  +amutake;
+  +no-maddo;
+>
