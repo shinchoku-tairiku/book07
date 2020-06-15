@@ -5,4 +5,8 @@ build: .satysfi/dist/fonts
 	$(SATYSFI) src/main.saty -o main.pdf
 
 .satysfi/dist/fonts:
-	./install-fonts.sh
+	./install-fonts.sh fonts.txt .satysfi
+
+.PHONT: clean-fonts
+clean-fonts:
+	rm -rf .satysfi/dist/fonts/
