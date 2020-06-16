@@ -7,6 +7,6 @@ build: .satysfi/dist/fonts
 .satysfi/dist/fonts:
 	./scripts/install-fonts.sh fonts.txt .satysfi
 
-.PHONT: clean-fonts
+.PHONY: clean-fonts
 clean-fonts:
 	rm -rf .satysfi/dist/fonts/
