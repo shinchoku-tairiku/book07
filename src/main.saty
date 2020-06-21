@@ -3,6 +3,7 @@
 @import: yutopp/main
 @import: amutake/main
 @import: no_maddo/main
+@import: pocketberserker/main
 
 document '<
   +p{
@@ -15,4 +16,5 @@ document '<
   +yutopp;
   +amutake;
   +no-maddo;
+  +pocketberserker;
 >
