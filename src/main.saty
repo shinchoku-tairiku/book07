@@ -4,6 +4,7 @@
 @import: amutake/main
 @import: no_maddo/main
 @import: pocketberserker/main
+@import: youxkei/main
 
 document '<
   +p{
@@ -17,4 +18,5 @@ document '<
   +amutake;
   +no-maddo;
   +pocketberserker;
+  +youxkei;
 >
