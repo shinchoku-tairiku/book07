@@ -1,0 +1,12 @@
+@import: ../shinchoku-tairiku
+
+let bib-items =
+  [ (`minji06_00117`, BibMisc
+    (|
+      title = Some {一人会社の設立登記申請は完全オンライン申請がおすすめです！};
+      author = None;
+      howpublished = Some {\url(`http://www.moj.go.jp/MINJI/minji06_00117.html`);};
+      year = None;
+      month = None;
+    |));
+  ]
