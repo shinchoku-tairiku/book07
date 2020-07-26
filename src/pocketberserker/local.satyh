@@ -1,4 +1,4 @@
-@import: ../shinchoku-tairiku
+@import: ../../shinchoku-tairiku.satyh/shinchoku-tairiku
 
 let bib-items =
   [ (`minji06_00117`, BibMisc
