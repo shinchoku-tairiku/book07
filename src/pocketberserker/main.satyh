@@ -108,9 +108,9 @@ let-block +pocketberserker = '<
           TODO: 入金方法、明細コピー
         }
       >
-      +subsection{法務局への書類提出>{
+      +subsection{法務局への書類提出}<
         +p {}
-      }
+      >
       +subsection{登記事項証明書取得と印鑑登録}<
         +p {}
       >
