@@ -1,6 +1,6 @@
 @import: ../../shinchoku-tairiku.satyh/shinchoku-tairiku
 
 let-block +amutake = '<
-  +chapter{amutake担当章}{謎の名言絶対にいる}<
+  +chapter{モバイルアプリからCoqを動かしたい Part 1}{千里の道も一歩から『孟子』}<
   >
 >
