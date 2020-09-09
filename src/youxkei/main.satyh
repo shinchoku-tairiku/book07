@@ -144,8 +144,8 @@ end = struct
                         追加したフレームの起頂点と方向頂点を明確にするため、必ず橋辺と方向辺が存在する必要があります。
                     }
                     +row{|
-                          \minipage(0.5)<+figure(`mccode_m`)(8cm){${M}}>
-                        | \minipage(0.5)<+figure(`mccode_m_prime`)(8cm){${M'}}>
+                          \minipage(0.5)<+figure(`mccode_m`)(6cm){${M}}>
+                        | \minipage(0.5)<+figure(`mccode_m_prime`)(6cm){${M'}}>
                     |}
                     +p{
                         ${M}の最外フレームから追加したフレーム張られている辺のうち、橋辺と方向辺でない辺は情報埋め込みのため辺であるため、ここでは\dfn{データ辺}と呼ぶことにします。
@@ -159,12 +159,29 @@ end = struct
 
             +section{MCコードの性質}<
                 +p{
-                    MCコードを機械で読み取る上で重要となるMCコードの性質があります。それは、「全てのMCコードには次数が3となる中心頂点がただ1つ存在する」という点です。
-                    この性質は簡単に証明できるため、ここに証明を載せようと考えたのですが、
-                    この本で使用しているshinchoku-tairiku.satyh\footnote{\url(`https://github.com/shinchoku-tairiku/shinchoku-tairiku.satyh`);}に
-                    \code(`+theorem`);や\code(`+proof`);がなかったので、載せるモチベーションが下がってしまいました。
-                    仕方がないので、この性質の証明は読者の方への演習問題にしたいと思います。
+                    MCコードを機械で読み取る上で重要となるMCコードの性質があります。それは、「全てのMCコードには次数が3となる頂点がただ1つ存在する」という点です。
+                    その頂点とは、基本形に出てきた中心頂点です。
+                    この性質は簡単に証明できるため、ここに証明を載せます。
                 }
+                +theorem{
+                    全てのMCコード${M}には次数が3となる頂点がただ1つ存在する。
+                }
+                +proof<
+                    +p{
+                        ${M}の構造に関する帰納法で証明する。
+                    }
+                    +p{
+                        ${M}が基本形である場合、${M}の中心頂点の次数が3であり、中心頂点以外のフレーム上の頂点の次数は全て4である。
+                        したがって、中心頂点が求める頂点である。
+                    }
+                    +p{
+                        ${M}がフレーム追加、つまり\figref(`mccode_add_frame`);のような形をしている場合、${M}の最外フレームの内側にMCコード${M'}を含む形となる。
+                        帰納法の仮定より、${M'}には次数が3となる唯一の頂点が存在するので、その頂点を${V}とする。
+                        ${M}の最外フレーム上の頂点は次数が4である。
+                        したがって、${M}に唯一存在する次数が3となる頂点は${V}であり、この${V}が求める頂点である。
+                    }
+                    +figure(`mccode_add_frame`)(6cm){${M}}
+                >
                 +p{
                     MCコードにはただ1つの中心頂点が存在するので、
                     その中心頂点から橋辺と方向辺をたどって全てのフレーム上の頂点に番号を振り、
@@ -174,7 +191,7 @@ end = struct
             >
 
             +section{MC Code Generator}<
-                +figure(`mccode_hello`)(8cm){\code(`Hello, world!`);という文字列を埋め込んだMCコード}
+                +figure(`mccode_hello`)(6cm){\code(`Hello, world!`);という文字列を埋め込んだMCコード}
                 +p{
                     MCコードの構成が決まったので、MC Code Generator\footnote{\url(`https://youxkei.github.io/mccode_generator/`);}を作ってみました。
                     \figref(`mccode_hello`);はMC Code Generatorで作成した\code(`Hello, world!`);という文字列を埋め込んだMCコードです。
@@ -221,7 +238,7 @@ end = struct
                         画像の二値化には色々は方法がありますが、ここでは\dfn{大津の二値化}を使います。
                         実際に\figref(`mccode_base`);を二値化した画像が\figref(`mccode_binary`);です。
                     }
-                    +figure(`mccode_binary`)(5cm){二値化した画像}
+                    +figure(`mccode_binary`)(6cm){二値化した画像}
                     +p{
                         \figref(`mccode_binary`);は入力となった\figref(`mccode_base`);と比べて白黒が反転していることに気づいたと思います。
                         以降のステップを実装する上で白黒を反転させると都合が良いので、ここで反転の処理を追加しています。
@@ -239,15 +256,15 @@ end = struct
                         この時の膨張させるピクセル数は収縮させたピクセル数と同じにします。
                     }
                     +row{|
-                          \minipage(0.5)<+figure(`mccode_eroded`)(5cm){二値画像を収縮させた画像}>
-                        | \minipage(0.5)<+figure(`mccode_dilated`)(5cm){収縮した画像を膨張させた画像}>
+                          \minipage(0.5)<+figure(`mccode_eroded`)(6cm){二値画像を収縮させた画像}>
+                        | \minipage(0.5)<+figure(`mccode_dilated`)(6cm){収縮した画像を膨張させた画像}>
                     |}
                     +p{
                         実は、\figref(`mccode_dilated`);を頂点部分画像として使うと、後のステップで不都合があります。
                         そこで、非常に場当たり的な解決策ではありますが、
                         \figref(`mccode_dilated`);をより膨張させた\figref(`mccode_vertices`);のような画像を頂点部分画像として使用することにします。
                     }
-                    +figure(`mccode_vertices`)(5cm){頂点部分画像}
+                    +figure(`mccode_vertices`)(6cm){頂点部分画像}
                 >
                 +subsection{二値画像の細線化}<
                     +p{
@@ -265,7 +282,7 @@ end = struct
                         ここでは、Hilditchアルゴリズムを使うことにします。
                         実際にHilditchアルゴリズムを使って細線化を行うと、\figref(`mccode_skeleton`);のような画像を得ることができます。
                     }
-                    +figure(`mccode_skeleton`)(5cm){細線化した画像}
+                    +figure(`mccode_skeleton`)(6cm){細線化した画像}
                 >
                 +subsection{ピクセルの分類}<
                     +p{
@@ -289,7 +306,7 @@ end = struct
                         \todo{もっと分かりやすい色にする}
 
                     }
-                    +figure(`mccode_classified_skeleton`)(5cm){ピクセルを分類した画像}
+                    +figure(`mccode_classified_skeleton`)(6cm){ピクセルを分類した画像}
                 >
                 +subsection{隣接リストの計算}<
                     +p{
@@ -314,7 +331,7 @@ end = struct
 
             +section{mccode_scanner}<
                 +p{MCコードの画像を受け取り、埋め込まれたデータを読み取るプログラムである、mccode_scanner\footnote{\url(`https://github.com/youxkei/mccode_scanner`);}を作りました。}
-                +figure(`mccode_wagahai`)(8cm){猫であるMCコード}
+                +figure(`mccode_wagahai`)(6cm){猫であるMCコード}
                 +p{例として\figref(`mccode_wagahai`);をmccode_scannerで読み取ってみると、\coderef(`wagahai`);のようになります。}
                 +code(`wagahai`)(```
                     $ cargo -V
@@ -337,11 +354,33 @@ end = struct
             >
 
             +section{今後の課題}<
-
+                +p{
+                    今後の課題として、交点ピクセルの適切な処理が挙げられます。
+                    Optical Graph Recognitionの説明の際、交点ピクセルの処理に触れていなかったことにお気づきでしょうか。
+                    実は、今回の実装では頂点部分を実際の頂点よりも膨張させることで、交点ピクセルが発生しないようにしています。
+                    これが、\figref(`mccode_dilated`);をより膨張させた\figref(`mccode_vertices`);を頂点部分画像として使う理由です。
+                    この実装は非常に場当たり的で、頂点同士が近づくとすぐに破綻します。
+                    より膨張させた画像を頂点部分画像として使うのをやめて、
+                    交点ピクセルを適切に処理するようにすることで、受理できるMCコードの範囲が広がります。
+                }
+                +p{
+                    今回、mccode_scannerはRustで実装しました。
+                    これは、ソースコードをWebAssemblyにコンパイルして、スマートフォン上のブラウザでMCコードのスキャンを行いたかったためです。
+                    QRコードのように、スマートフォン上でカメラに映るMCコードのスキャンを行いたかったのですが、時間が足りずに実装はRustで書いたスキャン部分のみとなってしまいました。
+                    これも今後の課題となります。
+                }
             >
 
             +section{あとがき}<
                 +p{
+                    前々から、どうせ魔法陣を生成するなら情報を埋め込んだ魔法陣を生成したい！と思っていて、この進捗大陸の締切駆動開発でなんとか実装することができました。
+                    ただ、MCコードは想像していたよりも魔法陣っぽさがないような気がしています。
+                    この辺りは難しいですね・・・
+                }
+                +p{
+                    今回もSATySFiでの執筆となったのですが、かなり執筆体験が良かったです。
+                    やっぱり静的型チェックは最高ですね。
+                    それと、\@amutake氏にお願いしたら締切の2日前にもかかわらず\code(`+theorem`);と\code(`+proof`);を追加してくれました。ありがとうございます！
                 }
             >
         >
