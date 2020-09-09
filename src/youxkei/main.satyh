@@ -4,12 +4,18 @@ module Youxkei : sig
     direct +youxkei : [] block-cmd
 end = struct
     let-inline \dfn word = {\emph{#word;}}
+    let-inline \todo it = {\emph{TODO: #it;}}
 
-    let-inline \ref label = {\ref(`youxkei:figure:` ^ label);}
-    let-inline \figref label = {図\ref(label);}
+    let-inline \ref label = {\ref(`youxkei:` ^ label);}
+    let-inline \figref label = {図\ref(`figure:` ^ label);}
+    let-inline \coderef label = {コード\ref(`code:` ^ label);}
 
     let-block +figure label size caption = '<
         +figure?:(`youxkei:figure:` ^ label)?:(size)(`youxkei/` ^ label ^ `.pdf`){#caption;}
+    >
+
+    let-block +code label code caption = '<
+        +code?:(`youxkei:code:` ^ label)(code){#caption;}
     >
 
     let bib-items = [
@@ -70,8 +76,10 @@ end = struct
                     グラフであれば、情報を埋め込むことができますし、機械で読み取りやすそうです。
                     グラフに情報を埋め込み、そのグラフを魔法陣っぽく表示することで、情報を機会が読み取ることができる魔法陣を作ることができそうです。
                 }
-                +figure(`not_graph`)(10cm){こちらの方のグラフではない}
-                +figure(`graph`)(8cm){こちらの方のグラフ}
+                +row{|
+                      \minipage(0.5)<+figure(`not_graph`)(8cm){こちらの方のグラフではない}>
+                    | \minipage(0.5)<+figure(`graph`)(6.5cm){こちらの方のグラフ}>
+                |}
             >
 
             +section{MCコードの構成}<
@@ -121,7 +129,6 @@ end = struct
                         いま、\figref(`mccode_m`);のようにMCコード${M}があるとします。
                         このMCコード${M}の外側にフレームを追加したMCコード${M'}は、\figref(`mccode_m_prime`);のようになります。
                     }
-                    +figure(`mccode_m`)(8cm){${M}}
                     +p{
                         追加するフレームの頂点数は、${M}の頂点数に密度を足した数になります。
                         ${M}の最外フレームの頂点数は27、${M}の密度は9なので\footnote{図からは${M}の密度が9であることは分かりませんが、ここでは9であるとします}、追加したフレームの頂点数は36となっています。
@@ -136,7 +143,10 @@ end = struct
                         方向辺に繋がっている追加したフレーム上の頂点が追加したフレームの方向頂点になります。
                         追加したフレームの起頂点と方向頂点を明確にするため、必ず橋辺と方向辺が存在する必要があります。
                     }
-                    +figure(`mccode_m_prime`)(8cm){${M'}}
+                    +row{|
+                          \minipage(0.5)<+figure(`mccode_m`)(8cm){${M}}>
+                        | \minipage(0.5)<+figure(`mccode_m_prime`)(8cm){${M'}}>
+                    |}
                     +p{
                         ${M}の最外フレームから追加したフレーム張られている辺のうち、橋辺と方向辺でない辺は情報埋め込みのため辺であるため、ここでは\dfn{データ辺}と呼ぶことにします。
                         情報の埋め込み方法は単純で、データ辺が張られていれば1、データ辺が張られていれば0を表します。
@@ -199,12 +209,12 @@ end = struct
                     * 画像を二値化する
                     * 二値画像から頂点部分画像の生成する
                     * 二値画像を細線化する
-                    * 細線化した画像の辺を種類分類する
+                    * 細線化した画像について、ピクセルを分類する
                     * 辺を分類した画像から隣接リストを計算する
                 }
                 +p{
                     それぞれのステップについて説明していきます。
-                    説明のための入力画像としてMCコードの基本形である\figref(`mccode_base`);を使います。
+                    説明のための入力画像として、MCコードの基本形である\figref(`mccode_base`);を使います。
                 }
                 +subsection{画像の二値化}<
                     +p{
@@ -212,11 +222,122 @@ end = struct
                         実際に\figref(`mccode_base`);を二値化した画像が\figref(`mccode_binary`);です。
                     }
                     +figure(`mccode_binary`)(5cm){二値化した画像}
-                    +figure(`mccode_vertices`)(5cm){頂点部分}
+                    +p{
+                        \figref(`mccode_binary`);は入力となった\figref(`mccode_base`);と比べて白黒が反転していることに気づいたと思います。
+                        以降のステップを実装する上で白黒を反転させると都合が良いので、ここで反転の処理を追加しています。
+                        なので、反転処理自体は本質的なものではないです。
+                    }
+                >
+                +subsection{頂点部分画像の生成}<
+                    +p{
+                        二値化した画像に対して\dfn{収縮}と呼ばれる処理をすることで、白の部分を減らし、その結果\figref(`mccode_eroded`);のように辺部分を消し頂点部分のみを残した画像を生成することができます。
+                        収縮の際は何ピクセル収縮させるかを決める必要があります。
+                        ここでは「最も黒ピクセルから遠い白ピクセルの黒ピクセルまでの距離」を計算し、その距離の半分を収縮させるピクセル数としています。
+                    }
+                    +p{
+                        収縮させた画像に対して\dfn{膨張}と呼ばれる処理をすることで、\figref(`mccode_dilated`);のような頂点部分を表す画像を得ることができます。
+                        この時の膨張させるピクセル数は収縮させたピクセル数と同じにします。
+                    }
+                    +row{|
+                          \minipage(0.5)<+figure(`mccode_eroded`)(5cm){二値画像を収縮させた画像}>
+                        | \minipage(0.5)<+figure(`mccode_dilated`)(5cm){収縮した画像を膨張させた画像}>
+                    |}
+                    +p{
+                        実は、\figref(`mccode_dilated`);を頂点部分画像として使うと、後のステップで不都合があります。
+                        そこで、非常に場当たり的な解決策ではありますが、
+                        \figref(`mccode_dilated`);をより膨張させた\figref(`mccode_vertices`);のような画像を頂点部分画像として使用することにします。
+                    }
+                    +figure(`mccode_vertices`)(5cm){頂点部分画像}
+                >
+                +subsection{二値画像の細線化}<
+                    +p{
+                        頂点部分画像はひとまず横に置いておきまして、二値化した画像を\dfn{細線化}します。
+                        細線化は、二値画像を幅1ピクセルの線画像に変換する処理です。
+                    }
+                    +p{
+                        ここでは、4隣接で細線化を行います。
+                        4隣接では、あるピクセルの上下左右の4つのピクセルがそのピクセルに隣接するピクセルであるとみなして細線化します。
+                        今回は使いませんが、4隣接以外に8隣接での細線化もあります。
+                        8隣接では、あるピクセルの上下左右だけではなく斜めも含めた8つのピクセルがそのピクセルに隣接するピクセルであるとして細線化します。
+                    }
+                    +p{
+                        細線化を行うアルゴリズムは色々とあります。
+                        ここでは、Hilditchアルゴリズムを使うことにします。
+                        実際にHilditchアルゴリズムを使って細線化を行うと、\figref(`mccode_skeleton`);のような画像を得ることができます。
+                    }
+                    +figure(`mccode_skeleton`)(5cm){細線化した画像}
+                >
+                +subsection{ピクセルの分類}<
+                    +p{
+                        頂点部分画像を使って、細線化した画像の白ピクセルの種類を以下の4つに分類します。
+                    }
+                    +enumerate{
+                        * 頂点ピクセル
+                        * ポートピクセル
+                        * 交点ピクセル
+                        * 辺ピクセル
+                    }
+                    +p{
+                        頂点ピクセルは、名前の通り頂点部分のピクセルです。
+                        ポートピクセルは、頂点ピクセルに隣接するピクセルです。
+                        交点ピクセルは3つ以上の白ピクセルに隣接しているピクセルで、辺が交差しているピクセルを表します。
+                        頂点ピクセルでなく、ポートピクセルでなく、交点ピクセルでない白ピクセルは辺ピクセルとなります。
+                    }
+                    +p{
+                        実際に細線化した画像の白ピクセルの分類を行うと、\figref(`mccode_classified_skeleton`);のような画像となります。
+                        \figref(`mccode_classified_skeleton`);では、頂点ピクセルが白く、辺ピクセルがグレーに、それ以外のピクセルが明るいグレーで表されています。
+                        \todo{もっと分かりやすい色にする}
+
+                    }
+                    +figure(`mccode_classified_skeleton`)(5cm){ピクセルを分類した画像}
+                >
+                +subsection{隣接リストの計算}<
+                    +p{
+                        分類した細線化画像が得られたら、あとは隣接リストを計算するだけです。
+                        まず、同じ頂点に属するポートピクセルで同値類を作成します。
+                        同値類の作成にはUnion Find木を使いました。
+                        あとは、ポートピクセルから辺ピクセルをたどって\footnote{この辺ピクセルをたどる処理を書いた際、非常に久しぶりに深さ優先探索を書いたので、感慨深い気持ちになりました。}、
+                        ポートピクセル同士の繋がり方を調べることで、隣接リストを計算することができます。
+                    }
                 >
             >
 
+            +section{隣接リストから情報を読み取る}<
+                +p{
+                    MCコードの画像から隣接リストが計算できたら、後はMCコードに埋め込まれた情報を読み取るだけです。
+                    まず、中心頂点を探します。
+                    中心頂点は、全ての頂点の中で唯一次数が3なので、すぐに見つかります。
+                    中心頂点から橋辺と方向辺をたどって全ての頂点に番号を振ります。
+                    それぞれの頂点と頂点の間のデータ辺の張られ方から、MCコードに埋め込まれたデータを読み取ることができます。
+                }
+            >
+
+            +section{mccode_scanner}<
+                +p{MCコードの画像を受け取り、埋め込まれたデータを読み取るプログラムである、mccode_scanner\footnote{\url(`https://github.com/youxkei/mccode_scanner`);}を作りました。}
+                +figure(`mccode_wagahai`)(8cm){猫であるMCコード}
+                +p{例として\figref(`mccode_wagahai`);をmccode_scannerで読み取ってみると、\coderef(`wagahai`);のようになります。}
+                +code(`wagahai`)(```
+                    $ cargo -V
+                    cargo 1.45.1 (f242df6ed 2020-07-22)
+
+                    $ rustc -V
+                    rustc 1.45.2 (d3fb005a3 2020-07-31)
+
+                    $ git clone https://github.com/youxkei/mccode_scanner.git
+
+                    $ cd mccode_scanner
+
+                    $ cargo build --release
+
+                    $ curl -LO https://github.com/shinchoku-tairiku/book07/raw/master/src/youxkei/mccode_wagahai.png
+
+                    $ target/release/mccode_scanner mccode_wagahai.png
+                    吾輩は猫である。
+                ```){\figref(`mccode_wagahai`);をmccode_scannerで読み取る}
+            >
+
             +section{今後の課題}<
+
             >
 
             +section{あとがき}<
