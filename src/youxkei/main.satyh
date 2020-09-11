@@ -4,7 +4,6 @@ module Youxkei : sig
     direct +youxkei : [] block-cmd
 end = struct
     let-inline \dfn word = {\emph{#word;}}
-    let-inline \todo it = {\emph{TODO: #it;}}
 
     let-inline \ref label = {\ref(`youxkei:` ^ label);}
     let-inline \figref label = {図\ref(`figure:` ^ label);}
@@ -68,7 +67,7 @@ end = struct
                     ところで、この典型的な魔法陣を見ていると、数学の授業でなにか似たようなものを見たことがあるような気がします。
                     そうです。グラフです。
                 }
-                +figure(`magic_circle`)(8cm){典型的な魔法陣}
+                +figure(`magic_circle`)(6cm){典型的な魔法陣}
                 +p{
                     当然、ここでのグラフは\figref(`not_graph`);のグラフではなく、\figref(`graph`);のグラフです。
                 }
@@ -76,9 +75,9 @@ end = struct
                     グラフであれば、情報を埋め込むことができますし、機械で読み取りやすそうです。
                     グラフに情報を埋め込み、そのグラフを魔法陣っぽく表示することで、情報を機会が読み取ることができる魔法陣を作ることができそうです。
                 }
-                +row{|
-                      \minipage(0.5)<+figure(`not_graph`)(8cm){こちらの方のグラフではない}>
-                    | \minipage(0.5)<+figure(`graph`)(6.5cm){こちらの方のグラフ}>
+                +row{
+                    | \minipage(0.5)<+figure(`not_graph`)(7cm){こちらの方のグラフではない}>
+                    | \minipage(0.5)<+figure(`graph`)(6cm){こちらの方のグラフ}>
                 |}
             >
 
@@ -143,8 +142,8 @@ end = struct
                         方向辺に繋がっている追加したフレーム上の頂点が追加したフレームの方向頂点になります。
                         追加したフレームの起頂点と方向頂点を明確にするため、必ず橋辺と方向辺が存在する必要があります。
                     }
-                    +row{|
-                          \minipage(0.5)<+figure(`mccode_m`)(6cm){${M}}>
+                    +row{
+                        | \minipage(0.5)<+figure(`mccode_m`)(6cm){${M}}>
                         | \minipage(0.5)<+figure(`mccode_m_prime`)(6cm){${M'}}>
                     |}
                     +p{
@@ -255,8 +254,8 @@ end = struct
                         収縮させた画像に対して\dfn{膨張}と呼ばれる処理をすることで、\figref(`mccode_dilated`);のような頂点部分を表す画像を得ることができます。
                         この時の膨張させるピクセル数は収縮させたピクセル数と同じにします。
                     }
-                    +row{|
-                          \minipage(0.5)<+figure(`mccode_eroded`)(6cm){二値画像を収縮させた画像}>
+                    +row{
+                        | \minipage(0.5)<+figure(`mccode_eroded`)(6cm){二値画像を収縮させた画像}>
                         | \minipage(0.5)<+figure(`mccode_dilated`)(6cm){収縮した画像を膨張させた画像}>
                     |}
                     +p{
@@ -302,9 +301,7 @@ end = struct
                     }
                     +p{
                         実際に細線化した画像の白ピクセルの分類を行うと、\figref(`mccode_classified_skeleton`);のような画像となります。
-                        \figref(`mccode_classified_skeleton`);では、頂点ピクセルが白く、辺ピクセルがグレーに、それ以外のピクセルが明るいグレーで表されています。
-                        \todo{もっと分かりやすい色にする}
-
+                        \figref(`mccode_classified_skeleton`);では、頂点ピクセルが白、辺ピクセルがグレーで表されています。
                     }
                     +figure(`mccode_classified_skeleton`)(6cm){ピクセルを分類した画像}
                 >
@@ -346,7 +343,7 @@ end = struct
 
                     $ cargo build --release
 
-                    $ curl -LO https://github.com/shinchoku-tairiku/book07/raw/master/src/youxkei/mccode_wagahai.png
+                    $ curl -LO https://git.io/mccode_wagahai.png
 
                     $ target/release/mccode_scanner mccode_wagahai.png
                     吾輩は猫である。
@@ -378,7 +375,7 @@ end = struct
                     この辺りは難しいですね・・・
                 }
                 +p{
-                    今回もSATySFiでの執筆となったのですが、かなり執筆体験が良かったです。
+                    今回も\SATySFi;での執筆となったのですが、かなり執筆体験が良かったです。
                     やっぱり静的型チェックは最高ですね。
                     それと、\@amutake氏にお願いしたら締切の2日前にもかかわらず\code(`+theorem`);と\code(`+proof`);を追加してくれました。ありがとうございます！
                 }
