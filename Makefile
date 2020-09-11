@@ -1,4 +1,9 @@
 SATYSFI:=./scripts/run-docker.sh
+PDFTOOLS:=./scripts/run-pdf-tools.sh
+
+.PHONY: book
+book: build
+	$(PDFTOOLS) pdftk A=cover.pdf B=main.pdf cat A B output book.pdf
 
 .PHONY: build
 build: .satysfi/dist/fonts
