@@ -18,7 +18,7 @@ let-block ctx +credit =
   let ctx-items = ctx |> set-paragraph-margin 6pt 6pt in
   let k ctx =
     let len = 3cm in
-    left-block (ctx |> set-font-size (get-font-size ctx *' 1.8)) 5cm {進捗大陸06} {} +++
+    left-block (ctx |> set-font-size (get-font-size ctx *' 1.8)) 5cm {進捗大陸07} {} +++
     left-block ctx-items 5cm {2020年9月12日 初版 第1刷 発行} {} +++
     left-block ctx-items len {著者} {\@yutopp, \@amutake, \@pocketberserker, \@youxkei} +++
     left-block ctx-items len {表紙写真} {Radek Kucharski} +++
