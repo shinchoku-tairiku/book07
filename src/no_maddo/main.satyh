@@ -1,6 +1,0 @@
-@import: ../../shinchoku-tairiku.satyh/shinchoku-tairiku
-
-let-block +no-maddo = '<
-  +chapter{no_maddo担当章}{謎の名言絶対にいる}<
-  >
->
