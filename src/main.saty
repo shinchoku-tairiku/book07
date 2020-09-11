@@ -5,6 +5,7 @@
 @import: no_maddo/main
 @import: pocketberserker/main
 @import: youxkei/main
+@import: credit
 
 document '<
   +p{
@@ -19,4 +20,5 @@ document '<
   +no-maddo;
   +pocketberserker;
   +youxkei;
+  +credit;
 >
