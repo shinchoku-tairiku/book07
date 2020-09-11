@@ -4,6 +4,7 @@
 @import: amutake/main
 @import: pocketberserker/main
 @import: youxkei/main
+@import: credit
 
 document '<
   +p{
@@ -17,4 +18,5 @@ document '<
   +amutake;
   +pocketberserker;
   +youxkei;
+  +credit;
 >
