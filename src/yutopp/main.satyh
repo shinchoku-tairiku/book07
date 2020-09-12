@@ -73,7 +73,7 @@ def fib!(v: int32)(): int32 when v >= 2 {
     meta r = fib!(v-1)() + fib!(v-2)();
     return r;
 }
-```){文鳥言語でのfibのコンパイル時計算(テンプレート+オーバーロード)}
+```){自作言語でのfibのコンパイル時計算(テンプレート+オーバーロード)}
 
 +p {
 また途中でRustにも影響を受け、lifetimeに限りgenericsを盛り込むなどの実装をしていたところ、ある日処理系の実装の複雑度が自身の脳のキャパシティを超えメンテが不可能になり†破滅†が訪れました。
@@ -176,7 +176,7 @@ void f(T)(T a) {
 def f!(T)(a: T) {
     a * a; // エラー: T型に*演算を行える制約がない
 }
-```){Rillのgenerics}
+```){自作言語のgenerics}
 
 +p{
 そのため、上記のようなコードは意味解析を通らなくなります。これは関数f本体の解析の時点ではT型の値はどのような振る舞いが可能か分からないためです。
@@ -190,7 +190,7 @@ def f!(T)(a: T) {
 def f!(T: Mul)(a: T) { // Mulは*演算を行える制約
     a * a; // OK
 }
-```){Rillの制約付きgenerics}
+```){自作言語の制約付きgenerics}
 
 +p{
 genericsを採用している汎用プログラミング言語を挙げると、Java、C\#、Rust、Go(導入予定)、Swift、TypeScript、ML系などあり、主流の言語機能といった印象があります。
@@ -264,38 +264,44 @@ foo("abc");
 
 void foo(int);
 void foo(string);
-```){}
+```){同名のfooという関数がオーバロード(多重に定義)されている様子}
 
 +p{
-のような形で同じ名前で定義した関数を型によって呼びかえる機能ですね。1つ目のtemplate/genericsはパラメトリック多相。こちらのオーバロードはアドホック多相と呼ばれます。
-さて、上記でお行儀よくgenericsにしましたが、これはオーバロードと相性が悪いように思います。
+同じ名前で異なる実装の関数を多重に定義することができ、関数の呼び出し時には型によって適切に異なる実装を選択できる機能ですね。前節のtemplate/genericsはパラメトリック多相。こちらのオーバロードはアドホック多相と呼ばれます。
+}
++p{
+さて、templateはお行儀よくgenericsに置き換えてしまいましたが、これはオーバロードと相性が悪いように思います。
 }
 
 +code(`overload,adhoc,ts`)(```
 function f<T>(a: T) {
-    g(a);
+    g(a); // Tの制約のみでどのgが呼び出せる…？
 }
 
 function g(_: number): void;
 function g(_: string): void;
 function g(_: any) {}
-```){}
+```){TypeScriptのgenericsとオーバーロード}
 
 +p{
-まず、fのようなgeneric関数のTのパラメータの情報だけではgの関数のどのオーバーロードにマッチをするのか静的に決定できません。同様の理由で、型推論でも型を定めることができず相性が悪いです[要出典、書き足す]。
+まず、fのような多層関数のTのパラメータの情報だけでは、gの関数のどのオーバーロードにマッチをするのか静的に決定できません。これでは、少々使い勝手がよくありません。
 }
 
 +p {
-アドホック多相は型クラス(ここではtraitと書きます)を導入することでも実現できます。
+さて、このアドホック多相というのは、型クラス\footnote{\url(`https://people.csail.mit.edu/dnj/teaching/6898/papers/wadler88.pdf`);}といったものでも解決することができます。
+}
+
++p {
+自作言語でも、型クラス(ここではtraitと書きます)を導入することで上記の問題の解決を図ることにしました。
 }
 
 +code(`generics,type-class`)(```
-// FooAble 'a のような暗黙の型パラメータaを持つ型の型のようなもの
+// FooAble<a>のような暗黙の型パラメータaを持つ"型の型"のようなもの
 trait FooAble {
   // a -> ()
   def foo(self)
 }
-impl FooAble for int {
+impl FooAble for i32 {
   // int -> ()
   def foo(self) {}
 }
@@ -303,36 +309,70 @@ impl FooAble for string {
   // string -> ()
   def foo(self) {}
 }
+
 FooAble::foo(10);
 FooAble::foo("abc");
-```){}
+```){自作言語の型クラスとインスタンスのコード片}
 
 +p{
-genericsでは、以下のようにかけるようになります。
+また、genericsではオーバーロードの解決を以下のように書けるようになります。前節のgenericsの節で登場したMulと同じですね。
 }
 
 +code(`generics,nanika`)(```
 def foo!(T: FooAble)(T a) {
+  // 現時点でTは関数fooを呼べることを仮定して意味解析をすることができる
   T::foo(a)
 }
-```){}
+```){自作言語の型クラスを用いた多相関数}
 
 +p{
-これで、現時点でTはFooを呼べることを仮定して意味解析をすることができます。
-
-型クラスの実装方法\footnote{\url(`http://okmij.org/ftp/Computation/typeclass.html`);}としては、dictionary passing styleなどが有名です。この方法はC++でいるvtableのような関数テーブル(辞書)をひきまわす方法です。Haskellなどが採用しています。
+型クラスのオーバーロード解決の実装方法\footnote{\url(`http://okmij.org/ftp/Computation/typeclass.html`);}としては、dictionary passing styleなどが有名です。この方法はC++でいうvtableのような仮想関数テーブル(辞書)をひきまわす方法です。Haskellなどが採用しています。
 }
 
-+code(`generics,nanika`)(```
-コード編
-```){}
++row{|
+  \minipage(0.48)<
++code(`haskell,typeclass,giji`)(```
+class FooAble a where
+  foo :: a -> ()
+
+instance FooAble Int where
+  foo a  = ()
+
+foo(10)
+```){型クラスの疑似コード}
+  >
+| \minipage(0.48)<
++code(`haskell,typeclass,giji-dict`)(```
+data FooAbleD a = FooAbleDict (a -> ())
+foo (FooAbleDict f) a = f a
+
+FooAbleDInt = FooAbleDict (\a -> ())
+
+foo FooAbleDInt 10
+```){型クラスのdictionary passing styleでの実装}
+  >
+|}
 
 +p {
-自作言語では、Intensional type analysisという手法で行いました。おそらくこれはより原始的な方法で、型の一致を別途解析によって探索するような方法です。Scalaのimplicitsの探索はこの方法のようです。
+一方、自作言語ではIntensional type analysisという手法で行いました。これはおそらくより原始的な方法で、型の一致を別途解析によって探索するような方法です。Scalaのimplicitsの探索はこの方法のようです。
 }
 
++code(`haskell,typeclass,giji-dict`)(```
+// 型の判別によって実装を振り分けられる何かしら持っておく。
+// Mapで持っても良いし、switchで分岐してもよい。ADTで分岐してもなんでもよい。
+
+// 自作言語では、コード生成時に型と実装の対応を収集してMapで持っておく。
+// let fooOverloads = new Map<type, fooTable>();
+// fooOverloads[typeof(i32)] = fooInt
+
+// FooAble::foo(10)
+// ↓ 10はi32型ということはコード生成時に判明しているので、
+// 　 実装の対応から型に適したものを*コンパイル時に探索して*置き換える。
+fooInt(10)
+```){Intensional type analysisのイメージ}
+
 +p {
-自作言語では現状すべて単一化を行っているので、その際に静的にtableを探して埋め込めるはずです。
+自作言語では現状すべて単相化を行っているので、その際に型を探索してしまえば静的に関数を埋め込めるはずだろうということでより単純な方法を採用しました。このあたりはもう少し実装を進めてメリットデメリットを見極めたいところです…
 }
 
 >
